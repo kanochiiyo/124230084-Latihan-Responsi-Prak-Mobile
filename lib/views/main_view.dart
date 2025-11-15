@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:latres/views/home_view.dart';
+import 'package:latres/views/profile_view.dart';
 
 /// Flutter code sample for [BottomNavigationBar].
 
@@ -32,7 +33,7 @@ class _BottomNavigationBarExampleState
   static const List<Widget> _widgetOptions = <Widget>[
     HomeView(),
     Text('Index 1: Business', style: optionStyle),
-    Text('Index 2: School', style: optionStyle),
+    ProfileView(),
   ];
 
   void _onItemTapped(int index) {
