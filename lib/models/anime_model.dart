@@ -1,4 +1,5 @@
 class AnimeModel {
+  final String malId;
   final String title;
   final String titleEnglish;
   final String titleJapanese;
@@ -8,6 +9,7 @@ class AnimeModel {
   final String imageUrl;
 
   AnimeModel({
+    required this.malId,
     required this.title,
     required this.titleEnglish,
     required this.titleJapanese,
@@ -19,6 +21,7 @@ class AnimeModel {
 
   factory AnimeModel.fromJson(Map<String, dynamic> json) {
     return AnimeModel(
+      malId: json['malId'] ?? '',
       title: json['title'] ?? '',
       titleEnglish: json['title_english'] ?? '',
       titleJapanese: json['title_japanese'] ?? '',

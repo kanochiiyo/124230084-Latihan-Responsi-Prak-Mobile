@@ -13,7 +13,7 @@ class AuthController {
     await Future.delayed(const Duration(seconds: 1));
 
     // Panggil service
-    authService.login(usernameController.text, passwordController.text);
+    await authService.login(usernameController.text, passwordController.text);
   }
 
   Future<void> register() async {
@@ -25,5 +25,9 @@ class AuthController {
       passwordController.text,
       confirmPasswordController.text,
     );
+  }
+
+  Future<void> logout() async {
+    await authService.logout();
   }
 }

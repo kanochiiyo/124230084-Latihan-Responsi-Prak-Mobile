@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:latres/models/anime_model.dart';
+import 'package:latres/services/favorite_service.dart';
 
 class DetailView extends StatefulWidget {
   final AnimeModel anime;
@@ -10,16 +11,86 @@ class DetailView extends StatefulWidget {
 }
 
 class _DetailViewState extends State<DetailView> {
+  final FavoriteService favoriteService = FavoriteService();
+
+  bool isLoading = true;
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFavoriteStatus();
+  }
+
+  Future<void> _checkFavoriteStatus() async {
+    final animeId = widget.anime.malId.toString();
+    final isFav = await favoriteService.isFavorite(animeId);
+    if (mounted) {
+      setState(() {
+        isFavorite = isFav;
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> toggleFavorite() async {
+    final animeId = widget.anime.malId.toString();
+
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+
+    try {
+      await favoriteService.toggleFavorite(animeId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              isFavorite ? "Ditambahkan ke favorite." : "Dihapus dari favorite",
+            ),
+            backgroundColor: isFavorite ? Colors.green : Colors.grey,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isFavorite = !isFavorite;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Gagal memperbarui favorite: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.anime.title, overflow: TextOverflow.ellipsis),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.favorite_border_outlined),
-          ),
+          if (isLoading)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  strokeWidth: 2,
+                ),
+              ),
+            )
+          else
+            IconButton(
+              onPressed: toggleFavorite,
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
+                color: isFavorite ? Colors.red : Colors.grey,
+              ),
+            ),
         ],
       ),
       body: SingleChildScrollView(

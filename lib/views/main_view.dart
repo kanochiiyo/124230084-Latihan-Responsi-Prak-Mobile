@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:latres/views/favorite_view.dart';
 import 'package:latres/views/home_view.dart';
 import 'package:latres/views/profile_view.dart';
 
@@ -32,7 +33,7 @@ class _BottomNavigationBarExampleState
   );
   static const List<Widget> _widgetOptions = <Widget>[
     HomeView(),
-    Text('Index 1: Business', style: optionStyle),
+    FavoriteView(),
     ProfileView(),
   ];
 

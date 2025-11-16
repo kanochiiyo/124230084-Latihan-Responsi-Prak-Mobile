@@ -17,4 +17,18 @@ class AnimeService {
       throw Exception("Gagal fetch API.");
     }
   }
+
+  // Perlu fetch ulang karena bisa aja kalo kita ambil data yang udah difetch top anime, ada data favorite yang tersimpan tapi gak masuk top 25
+  Future<AnimeModel> getAnimeById(String id) async {
+    final String fullUrl = "$baseUrl/anime/$id";
+    final response = await http.get(Uri.parse(fullUrl));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      final Map<String, dynamic> data = json['data'];
+      return AnimeModel.fromJson(data);
+    } else {
+      throw Exception("Gagal mengambil data anime dengan id $id");
+    }
+  }
 }
