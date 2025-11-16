@@ -58,4 +58,6 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_sessionKey);
   }
+
+  
 }

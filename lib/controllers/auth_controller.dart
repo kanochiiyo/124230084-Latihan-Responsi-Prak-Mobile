@@ -30,4 +30,8 @@ class AuthController {
   Future<void> logout() async {
     await authService.logout();
   }
+
+  Future<String?> getUser() async {
+    return await authService.getUser();
+  }
 }

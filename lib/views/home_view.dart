@@ -12,6 +12,8 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final AnimeController animeController = AnimeController();
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -19,9 +21,21 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> fetchAnimeData() async {
-    await animeController.fetchAnimeData();
-    if (!mounted) return;
-    setState(() {});
+    try {
+      await animeController.fetchAnimeData();
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Gagal mendapatkan data anime: $e")),
+      );
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -32,35 +46,37 @@ class _HomeViewState extends State<HomeView> {
         backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
       ),
-      body: CustomScrollView(
-        slivers: [
-          // Grid anime
-          SliverPadding(
-            padding: EdgeInsets.all(16),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: InkWell(
-                    onTap: () {
-                      final anime = animeController.animeList[index];
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailView(anime: anime),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : CustomScrollView(
+              slivers: [
+                // Grid anime
+                SliverPadding(
+                  padding: EdgeInsets.all(16),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) => Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: InkWell(
+                          onTap: () {
+                            final anime = animeController.animeList[index];
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailView(anime: anime),
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: _animeCard(context, index),
                         ),
-                      );
-                    },
-                    borderRadius: BorderRadius.circular(20),
-                    child: _animeCard(context, index),
+                      ),
+                      childCount: animeController.animeList.length,
+                    ),
                   ),
                 ),
-                childCount: animeController.animeList.length,
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 

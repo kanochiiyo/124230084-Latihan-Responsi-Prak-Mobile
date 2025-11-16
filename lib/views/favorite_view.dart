@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:latres/controllers/anime_controller.dart';
 import 'package:latres/models/anime_model.dart';
+import 'package:latres/views/detail_view.dart';
 
 class FavoriteView extends StatefulWidget {
   const FavoriteView({super.key});
@@ -32,6 +33,7 @@ class _FavoriteViewState extends State<FavoriteView> {
         if (mounted) {
           setState(() {
             animeList = list;
+            isLoading = false;
           });
         }
       } catch (e) {
@@ -41,6 +43,9 @@ class _FavoriteViewState extends State<FavoriteView> {
               content: Text("Gagal mendapatkan data anime favorite: $e"),
             ),
           );
+          setState(() {
+            isLoading = false;
+          });
         }
       }
     }
@@ -50,35 +55,49 @@ class _FavoriteViewState extends State<FavoriteView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Favorite Anime", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          "Favorite Anime",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
       ),
-      body: CustomScrollView(
-        slivers: [
-          // Grid anime
-          SliverPadding(
-            padding: EdgeInsets.all(16),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(20),
-                    child: _animeCard(context, index),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : CustomScrollView(
+              slivers: [
+                // Grid anime
+                SliverPadding(
+                  padding: EdgeInsets.all(16),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) => Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: InkWell(
+                          onTap: () {
+                            final anime = animeList[index];
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailView(anime: anime),
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: _animeCard(context, index),
+                        ),
+                      ),
+                      childCount: animeList.length,
+                    ),
                   ),
                 ),
-                childCount: animeController.animeList.length,
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
   Widget _animeCard(context, index) {
-    final anime = animeController.animeList[index];
+    final anime = animeList[index];
 
     return Container(
       padding: const EdgeInsets.all(12),

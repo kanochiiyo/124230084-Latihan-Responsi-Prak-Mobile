@@ -21,7 +21,7 @@ class AnimeModel {
 
   factory AnimeModel.fromJson(Map<String, dynamic> json) {
     return AnimeModel(
-      malId: json['malId'] ?? '',
+      malId: json['mal_id'].toString(),
       title: json['title'] ?? '',
       titleEnglish: json['title_english'] ?? '',
       titleJapanese: json['title_japanese'] ?? '',

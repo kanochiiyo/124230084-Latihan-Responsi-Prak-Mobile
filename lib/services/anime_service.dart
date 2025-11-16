@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:latres/models/anime_model.dart';
 
 class AnimeService {
-  final String baseUrl = "https://api.jikan.moe/";
+  final String baseUrl = "https://api.jikan.moe";
 
   Future<List<AnimeModel>> fetchAnimeData() async {
     final String fullUrl = "$baseUrl/v4/top/anime";
@@ -20,7 +20,7 @@ class AnimeService {
 
   // Perlu fetch ulang karena bisa aja kalo kita ambil data yang udah difetch top anime, ada data favorite yang tersimpan tapi gak masuk top 25
   Future<AnimeModel> getAnimeById(String id) async {
-    final String fullUrl = "$baseUrl/anime/$id";
+    final String fullUrl = "$baseUrl/v4/anime/$id";
     final response = await http.get(Uri.parse(fullUrl));
 
     if (response.statusCode == 200) {
